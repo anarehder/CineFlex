@@ -1,21 +1,26 @@
-import styled from "styled-components"
-import { useState, useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
-import axios from "axios";
-import { IND_BORDA, IND_FUNDO, DIS_BORDA, DIS_FUNDO, SEL_BORDA,  SEL_FUNDO} from "./colors";
-import Seat from "./Seat";
 
-export default function SeatsPage() {
+import styled from "styled-components";
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import Seat from "./Seat";
+import Caption from "./Caption";
+
+export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme}) {
     const { idSessao } = useParams();
-    const [assentos, setAssentos] = useState([]);
+    const [ids, setIds] = useState([]);
+    const [numero, setNumero] = useState([]);
+    const [name, setName] = useState("")
+    const [cpf, setCpf] = useState("")
+    const navigate = useNavigate()
 
 	useEffect(() => {
         const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
 		const requisicao = axios.get(url);
 
 		requisicao.then(resposta => {
-            console.log(resposta.data);
-            setAssentos(resposta.data);
+            //console.log(resposta.data);
+            setDadosFilme(resposta.data);
 		});
 
         requisicao.catch(erro => {
@@ -24,54 +29,75 @@ export default function SeatsPage() {
 
 	}, []);
 
-	if(assentos.length === 0) {
+	if(dadosFilme.length === 0) {
 		return "Carregando ...";
 	}
+
+    function adicionarAssento(id,assento){
+        setIds([...ids,id]);
+        setNumero([...numero,assento]);
+    }
+
+    function removerAssento(id,assento){
+        const lista = [...ids];
+        let index = lista.findIndex(elemento => elemento === id);
+        lista.splice(index,1);
+        setIds(lista);
+        const lista2 = [...numero];
+        let index2 = lista2.findIndex(elemento => elemento === assento);
+        lista2.splice(index2,1);
+        setNumero(lista2);
+    }
+
+    function enviaDados(e) {
+        e.preventDefault()
+    
+        const URL = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
+        const body = { ids, name, cpf }; 
+        const dados = { numero, name, cpf };
+        setDadosCompra(dados);
+    
+        const promise = axios.post(URL, body)
+        promise.then(res => {
+          navigate("/sucesso");
+        })
+        promise.catch(err => alert(err.response.data.message))
+      }
 
     return (
         <PageContainer>
             Selecione o(s) assento(s)
             <SeatsContainer >
-            {assentos.seats.map((assento) =>
-                <Seat key={assento.id} assento={assento} />
+            {dadosFilme.seats.map((assento) =>
+                <Seat key={assento.id} assento={assento}
+                adicionarAssento={adicionarAssento} removerAssento={removerAssento} />
             )}
             </SeatsContainer>
 
-            <CaptionContainer>
-                <CaptionItem>
-                    <CaptionCircle cor={SEL_FUNDO} borda={SEL_BORDA}/>
-                    Selecionado
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle cor={DIS_FUNDO} borda={DIS_BORDA}/>
-                    Disponível
-                </CaptionItem>
-                <CaptionItem>
-                    <CaptionCircle cor={IND_FUNDO} borda={IND_BORDA}/>
-                    Indisponível
-                </CaptionItem>
-            </CaptionContainer>
+            <Caption />
 
             <FormContainer>
+            <form onSubmit={enviaDados}>
                 Nome do Comprador:
-                <input placeholder="Digite seu nome..." data-test="client-name"/>
+                <input placeholder="Digite seu nome..." data-test="client-name"
+                type="text" value={name} onChange={e => setName(e.target.value)} required/>
 
                 CPF do Comprador:
-                <input placeholder="Digite seu CPF..." data-test="client-cpf"/>
-                
-                <Link to="/sucesso">
-                <button data-test="book-seat-btn">Reservar Assento(s)</button>
-                </Link>
-
+                <input placeholder="Digite seu CPF..." data-test="client-cpf"
+                type="text" value={cpf} onChange={e => setCpf(e.target.value)} required/>
+                <ButtonsContainer>
+                <button data-test="book-seat-btn" type="submit">Reservar Assento(s)</button>
+                </ButtonsContainer>
+            </form>
             </FormContainer>
 
             <FooterContainer data-test="footer">
                 <div>
-                    <img src={assentos.movie.posterURL} alt="poster" />
+                    <img src={dadosFilme.movie.posterURL} alt="poster" />
                 </div>
                 <div>
-                    <p>{assentos.movie.title}</p>
-                    <p>{assentos.day.weekday} - {assentos.name}</p>
+                    <p>{dadosFilme.movie.title}</p>
+                    <p>{dadosFilme.day.weekday} - {dadosFilme.name}</p>
                 </div>
             </FooterContainer>
 
@@ -107,41 +133,19 @@ const FormContainer = styled.div`
     align-items: flex-start;
     margin: 20px 0;
     font-size: 18px;
-    a {
-        text-decoration: none;
-        align-self: center;
-    }
-    button {
-        align-self: center;
-    }
+    text-align: left;
     input {
         width: calc(100vw - 60px);
     }
 `
 
-const CaptionContainer = styled.div`
+const ButtonsContainer = styled.div`
     display: flex;
     flex-direction: row;
-    width: 300px;
-    justify-content: space-between;
-    margin: 20px;
-`
-const CaptionCircle = styled.div`
-    border: 1px solid ${props => props.borda};
-    background-color: ${props => props.cor};
-    height: 25px;
-    width: 25px;
-    border-radius: 25px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 5px 3px;
-`
-const CaptionItem = styled.div`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    font-size: 12px;
+    margin: 20px 0;
+    button {
+        margin: 0 auto;
+    }
 `
 
 const FooterContainer = styled.div`

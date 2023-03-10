@@ -12,7 +12,7 @@ export default function SessionsPage() {
 		const requisicao = axios.get(url);
 
 		requisicao.then(resposta => {
-            console.log(resposta.data)
+            //console.log(resposta.data)
             setSessoes(resposta.data);
 		});
 
@@ -55,6 +55,7 @@ export default function SessionsPage() {
         </PageContainer>
     )
 }
+// validar caracteres = itemParaValidar.value.length;
 
 const PageContainer = styled.div`
     display: flex;

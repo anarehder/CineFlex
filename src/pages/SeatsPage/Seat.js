@@ -2,22 +2,24 @@ import styled from "styled-components"
 import { useState } from "react";
 import { IND_BORDA, IND_FUNDO, DIS_BORDA, DIS_FUNDO, SEL_BORDA,  SEL_FUNDO} from "./colors";
 
-export default function Seat({assento}) {
+export default function Seat({assento, adicionarAssento, removerAssento}) {
     const [status, setStatus] = useState(true);
 
-    function selecionaAssento(statusInicial){
-        if (statusInicial === true){
-            console.log("disponivel")
+    function selecionaAssento(statusInicial, id, assento){
+        if (statusInicial === true && status === true){
             setStatus(!status);
+            adicionarAssento(id, assento);
+        } else if (statusInicial === true && status === false){
+            setStatus(!status);
+            removerAssento(id, assento);
         } else {
-            console.log("INdisponivel")
             alert("Esse assento não está disponível");
         }
     }
 
     return (<>
     <SeatItem statusInicial={assento.isAvailable} status={status}
-        onClick={() => selecionaAssento(assento.isAvailable)}
+        onClick={() => selecionaAssento(assento.isAvailable, assento.id, assento.name)}
         data-test="seat">
         {assento.name}
     </SeatItem>
