@@ -2,6 +2,7 @@ import styled from "styled-components"
 import { Link } from "react-router-dom";
 export default function SuccessPage({dadosCompra, dadosFilme, setVoltar}) {
     setVoltar(`/assentos/${dadosFilme.id}`);
+
     return (
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>
@@ -11,19 +12,20 @@ export default function SuccessPage({dadosCompra, dadosFilme, setVoltar}) {
                 <p>{dadosFilme.movie.title}</p>
                 <p>{dadosFilme.day.date} - {dadosFilme.name}</p>
             </TextContainer>
-
-            <TextContainer data-test="seats-info">
-                <strong><p>Ingressos</p></strong>
-                {dadosCompra.numero.map((i) =>
-                <p key={i} >Assento {i}</p>
-                )}
-            </TextContainer>
-
-            <TextContainer data-test="client-info">
-                <strong><p>Comprador</p></strong>
-                <p>Nome: {dadosCompra.name}</p>
-                <p>CPF: {dadosCompra.cpf}</p>
-            </TextContainer>
+            {dadosCompra.compradores.map((d,index) => 
+            <>
+                <TextContainer data-test="seats-info" key={d.nome}>
+                    <strong><p>Ingresso</p></strong>
+                    <p >Assento {dadosCompra.numero[index]}</p>
+                </TextContainer>
+                <TextContainer data-test="client-info" key={d.cpf}>
+                    <strong><p>Comprador</p></strong>
+                    <p >Nome: {d.nome}</p>
+                    <UltimoP item={"ultimo"}>CPF: {d.cpf}</UltimoP>
+                </TextContainer>
+            </>
+            )}
+            
             <Link to="/" data-test="go-home-btn">
             <button>Voltar para Home</button>
             </Link>
@@ -69,4 +71,7 @@ const TextContainer = styled.div`
         font-weight: bold;
         margin-bottom: 10px;
     }
+`
+const UltimoP = styled.p`
+    margin-bottom: ${props => props.item === "ultimo" ? "15px" : ""};
 `

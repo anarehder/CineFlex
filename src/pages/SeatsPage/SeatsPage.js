@@ -5,14 +5,16 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import Seat from "./Seat";
 import Caption from "./Caption";
+import Comprador from "./Comprador";
 
 export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, setVoltar}) {
     const { idSessao } = useParams();
     const [ids, setIds] = useState([]);
     const [numero, setNumero] = useState([]);
-    const [name, setName] = useState("")
-    const [cpf, setCpf] = useState("")
-    const navigate = useNavigate()
+    const navigate = useNavigate();
+    const [compradores, setCompradores] = useState([]);
+/*     console.log("compradores ", compradores);
+    console.log("body", {ids, compradores}); */
 
 	useEffect(() => {
         const url = `https://mock-api.driven.com.br/api/v8/cineflex/showtimes/${idSessao}/seats`;
@@ -40,22 +42,30 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, se
     }
 
     function removerAssento(id,assento){
-        const lista = [...ids];
-        let index = lista.findIndex(elemento => elemento === id);
-        lista.splice(index,1);
-        setIds(lista);
-        const lista2 = [...numero];
-        let index2 = lista2.findIndex(elemento => elemento === assento);
-        lista2.splice(index2,1);
-        setNumero(lista2);
+        let resultado = window.confirm("Deseja excluir o assento: " + assento + " ?")
+        if (resultado === true) {
+            const lista = [...ids];
+            let index = lista.findIndex(elemento => elemento === id);
+            lista.splice(index,1);
+            setIds(lista);
+            const lista2 = [...numero];
+            let index2 = lista2.findIndex(elemento => elemento === assento);
+            lista2.splice(index2,1);
+            setNumero(lista2);
+            //alert("O assento " + assento + " será excluído da lista!");    
+        }
+        else{
+            //alert("Você desistiu de excluir o assento " + assento + " da lista!");
+        }
+        
     }
 
     function enviaDados(e) {
         e.preventDefault()
     
         const URL = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
-        const body = { ids, name, cpf }; 
-        const dados = { numero, name, cpf };
+        const body = { ids, compradores }; 
+        const dados = { numero, compradores};
         setDadosCompra(dados);
     
         const promise = axios.post(URL, body)
@@ -79,15 +89,12 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, se
 
             <FormContainer>
             <form onSubmit={enviaDados}>
-                Nome do Comprador:
-                <input placeholder="Digite seu nome..." data-test="client-name"
-                type="text" value={name} onChange={e => setName(e.target.value)} required/>
-
-                CPF do Comprador:
-                <input placeholder="Digite seu CPF..." data-test="client-cpf"
-                type="text" value={cpf} onChange={e => setCpf(e.target.value)} required/>
+                {numero.map((num,index) => <Comprador key={num} assento={num} idAssento={ids[index]}
+                compradores={compradores} setCompradores={setCompradores}/>)}                
                 <ButtonsContainer>
-                <button data-test="book-seat-btn" type="submit">Reservar Assento(s)</button>
+                <button data-test="book-seat-btn" type="submit"
+                disabled={numero.length === 0 ? true : ""}
+                >Reservar Assento(s)</button>
                 </ButtonsContainer>
             </form>
             </FormContainer>
@@ -141,9 +148,9 @@ const FormContainer = styled.div`
 `
 
 const ButtonsContainer = styled.div`
+    width: 330px;
     display: flex;
     flex-direction: row;
-    margin: 20px 0;
     button {
         margin: 0 auto;
     }

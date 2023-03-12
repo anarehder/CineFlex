@@ -11,7 +11,6 @@ export default function App() {
     const [dadosCompra, setDadosCompra] = useState({});
     const [dadosFilme, setDadosFilme] = useState([]);
     const [voltar, setVoltar] = useState("");
-    console.log("voltar ",voltar);
 
     return (
         <>
