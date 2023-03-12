@@ -1,7 +1,7 @@
 import styled from "styled-components"
 import { Link } from "react-router-dom";
-export default function SuccessPage({dadosCompra, dadosFilme}) {
-console.log(dadosFilme)
+export default function SuccessPage({dadosCompra, dadosFilme, setVoltar}) {
+    setVoltar(`/assentos/${dadosFilme.id}`);
     return (
         <PageContainer>
             <h1>Pedido feito <br /> com sucesso!</h1>

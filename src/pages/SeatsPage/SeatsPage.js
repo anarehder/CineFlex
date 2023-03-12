@@ -6,7 +6,7 @@ import axios from "axios";
 import Seat from "./Seat";
 import Caption from "./Caption";
 
-export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme}) {
+export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, setVoltar}) {
     const { idSessao } = useParams();
     const [ids, setIds] = useState([]);
     const [numero, setNumero] = useState([]);
@@ -19,8 +19,9 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme}) {
 		const requisicao = axios.get(url);
 
 		requisicao.then(resposta => {
-            //console.log(resposta.data);
+            console.log(resposta.data);
             setDadosFilme(resposta.data);
+            setVoltar(`/sessoes/${resposta.data.movie.id}`);
 		});
 
         requisicao.catch(erro => {

@@ -3,7 +3,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Link } from "react-router-dom"
 
-export default function HomePage() {
+export default function HomePage({setVoltar, setCaminho}) {
 
     const [filmes, setFilmes] = useState([]);
 
@@ -13,6 +13,7 @@ export default function HomePage() {
 
 		requisicao.then(resposta => {
             setFilmes(resposta.data);
+            setVoltar("");
 		});
 
         requisicao.catch(erro => {

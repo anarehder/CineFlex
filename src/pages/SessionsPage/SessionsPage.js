@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import axios from "axios";
 
-export default function SessionsPage() {
+export default function SessionsPage({setVoltar}) {
     const {idFilme} = useParams();
     const [sessoes, setSessoes] = useState([]);
 
@@ -12,8 +12,9 @@ export default function SessionsPage() {
 		const requisicao = axios.get(url);
 
 		requisicao.then(resposta => {
-            //console.log(resposta.data)
+            //console.log(resposta.data);
             setSessoes(resposta.data);
+            setVoltar("/");
 		});
 
         requisicao.catch(erro => {
