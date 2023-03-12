@@ -51,7 +51,7 @@ const NavContainer = styled.div`
     }
     img {
         margin-left: 20px;
-        margin-right: 67px;
+        margin-right: 43vw;
         width: 24px;
         display: ${props => props.voltar === "" ? "none" : "" };
     }

@@ -62,18 +62,18 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, se
 
     function enviaDados(e) {
         e.preventDefault()
-    
         const URL = "https://mock-api.driven.com.br/api/v8/cineflex/seats/book-many";
         const body = { ids, compradores }; 
         const dados = { numero, compradores};
         setDadosCompra(dados);
-    
-        const promise = axios.post(URL, body)
-        promise.then(res => {
-          navigate("/sucesso");
-        })
-        promise.catch(err => alert(err.response.data.message))
-      }
+        if (numero.length !== 0) {
+            const promise = axios.post(URL, body)
+            promise.then(res => {
+              navigate("/sucesso");
+            })
+            promise.catch(err => alert(err.response.data.message))
+        }
+    }
 
     return (
         <PageContainer>
@@ -93,7 +93,7 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, se
                 compradores={compradores} setCompradores={setCompradores}/>)}                
                 <ButtonsContainer>
                 <button data-test="book-seat-btn" type="submit"
-                disabled={numero.length === 0 ? true : ""}
+                /* disabled={numero.length === 0 ? true : "" }*/
                 >Reservar Assento(s)</button>
                 </ButtonsContainer>
             </form>
@@ -148,7 +148,7 @@ const FormContainer = styled.div`
 `
 
 const ButtonsContainer = styled.div`
-    width: 330px;
+    width: calc(100vw - 40px);
     display: flex;
     flex-direction: row;
     button {
