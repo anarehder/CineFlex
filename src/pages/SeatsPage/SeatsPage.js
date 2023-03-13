@@ -79,6 +79,7 @@ export default function SeatsPage({setDadosCompra, dadosFilme, setDadosFilme, se
         <PageContainer>
             Selecione o(s) assento(s)
             <SeatsContainer >
+            
             {dadosFilme.seats.map((assento) =>
                 <Seat key={assento.id} assento={assento}
                 adicionarAssento={adicionarAssento} removerAssento={removerAssento} />

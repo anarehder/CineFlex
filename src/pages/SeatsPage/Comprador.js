@@ -25,7 +25,7 @@ export default function Comprador({assento, idAssento, compradores, setComprador
             setCompradores([...compradores, form]);
         }        
     }
-    
+
     return(
         <>
         <p>Nome do Comprador {assento}: </p>
